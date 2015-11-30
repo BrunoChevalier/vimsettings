@@ -4,7 +4,7 @@
 " Info: bmgg.chevalier@gmail.com 
 " ---------------------------------------------------------------------------------------
 " ***************************************************************************************
-
+execute pathogen#infect()
 filetype plugin indent on
 
 
@@ -15,7 +15,6 @@ filetype plugin indent on
 " ***************************************************************************************
 
 " set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 " Fancy statusbar
@@ -61,7 +60,8 @@ set tabstop=4       "Number of spaces that a <Tab> in the file counts for
 set shiftwidth=4   "Test first if we can do without it
 
 " Interface settings --------------------------------------------------------------------
-colorscheme moloki  "Set colorscheme - moloki is based on molokai with some minor changes
+set background=dark
+colorscheme solarized "Set colorscheme - moloki is based on molokai with some minor changes"
 let g:airline#extensions#bufferline#enabled = 1     "Display buffer in airline bar
 set cursorline      "Highlight the line where the cursor is
 set langmenu=none   "langmenu options sets the language used in menu's - none = English
