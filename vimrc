@@ -33,11 +33,15 @@ Plugin 'raimondi/delimitMate'
 Plugin 'gmarik/Vundle.vim'
 
 " Robotframework Highlighting - usage : setf robot
-Plugin 'git://github.com/mfukar/robotframework-vim.git'
+" Plugin 'git://github.com/mfukar/robotframework-vim.git'
+
+" Better whitespace highlighting for Vim, contains helper function :StripWhitespace
+Plugin 'ntpeters/vim-better-whitespace'
 
 call vundle#end()            " required
 
-
+autocmd VimEnter * DisableWhitespace
+autocmd VimEnter * EnableWhitespace
 
 " ***************************************************************************************
 " ---------------------------------------------------------------------------------------
@@ -59,6 +63,8 @@ set expandtab       "Use spaces to insert a <Tab> - A tab can be inserted by usi
 set tabstop=4       "Number of spaces that a <Tab> in the file counts for
 set shiftwidth=4   "Test first if we can do without it
 
+set pastetoggle=<F2>
+
 " Interface settings --------------------------------------------------------------------
 set background=dark
 colorscheme solarized "Set colorscheme - moloki is based on molokai with some minor changes"
@@ -66,7 +72,7 @@ let g:airline#extensions#bufferline#enabled = 1     "Display buffer in airline b
 set cursorline      "Highlight the line where the cursor is
 set langmenu=none   "langmenu options sets the language used in menu's - none = English
 set laststatus=2    "Show airline statusbar all the time
-syntax on           "Set syntaxhighlighting on
+syntax enable           "Set syntaxhighlighting on
 
 " Enable the list of buffers
 let g:airline#extensions#tabline#enabled = 1
@@ -139,4 +145,3 @@ nmap <leader>bq :bp <BAR> bd #<CR>
 
 " Show all open buffers and their status
 nmap <leader>bl :ls<CR>
-
