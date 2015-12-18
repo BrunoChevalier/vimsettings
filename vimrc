@@ -93,7 +93,7 @@ set wildmenu        "Better command-line completion
 set hidden          "Be able to switch between buffer without having to save every time
 
 set list
-set listchars=eol:¬,tab:▸·
+set listchars=eol:⏎,tab:␉·,trail:␠,nbsp:⏟
 
 " ***************************************************************************************
 " ---------------------------------------------------------------------------------------
