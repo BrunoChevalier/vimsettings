@@ -1,7 +1,7 @@
 " ***************************************************************************************
 " ---------------------------------------------------------------------------------------
 " Bruno Chevalier's .vimrc
-" Info: bmgg.chevalier@gmail.com 
+" Info: bmgg.chevalier@gmail.com
 " ---------------------------------------------------------------------------------------
 " ***************************************************************************************
 execute pathogen#infect()
@@ -92,7 +92,8 @@ set showcmd         "Show the current command-key-combination at the rights side
 set wildmenu        "Better command-line completion
 set hidden          "Be able to switch between buffer without having to save every time
 
-
+set list
+set listchars=eol:¬,tab:▸·
 
 " ***************************************************************************************
 " ---------------------------------------------------------------------------------------
