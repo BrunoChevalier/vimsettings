@@ -35,9 +35,6 @@ Plugin 'gmarik/Vundle.vim'
 " Robotframework Highlighting - usage : setf robot
 " Plugin 'git://github.com/mfukar/robotframework-vim.git'
 
-" Better whitespace highlighting for Vim, contains helper function :StripWhitespace
-Plugin 'ntpeters/vim-better-whitespace'
-
 call vundle#end()            " required
 
 autocmd VimEnter * DisableWhitespace
@@ -128,6 +125,9 @@ imap <Right> <Nop>
 
 " Remap goto end of line (easier to reach) ----------------------------------------------
 noremap ; $
+
+" Gundo
+nnoremap <F5> :GundoToggle<CR>
 
 " See https://joshldavis.com/2014/04/05/vim-tab-madness-buffers-vs-tabs/
 " To open a new empty buffer
