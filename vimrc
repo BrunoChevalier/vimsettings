@@ -92,6 +92,9 @@ set hidden          "Be able to switch between buffer without having to save eve
 set list
 set listchars=eol:⏎,tab:␉·,trail:␠,nbsp:⏟
 
+set tags=./tags,.hg/tags,tags;$HOME
+set statusline+=%{gutentags#statusline()}
+
 " ***************************************************************************************
 " ---------------------------------------------------------------------------------------
 " Key bindings
