@@ -90,11 +90,14 @@ set wildmenu        "Better command-line completion
 set hidden          "Be able to switch between buffer without having to save every time
 
 set list
-set listchars=eol:⏎,tab:␉·,trail:␠,nbsp:⏟
+" set listchars=eol:⏎,tab:␉·,trail:␠,nbsp:⏟
+set listchars=tab:␉·,trail:␠,nbsp:⏟
 
-set tags=./tags,.hg/tags,tags;$HOME
-set statusline+=%{gutentags#statusline()}
+set csprg=gtags-cscope
+let gtagsfile = $GTAGSROOT.'GTAGS'
+execute "cscope add ".gtagsfile
 
+set tags=./tags,tags;/
 " ***************************************************************************************
 " ---------------------------------------------------------------------------------------
 " Key bindings
@@ -132,6 +135,9 @@ noremap ; $
 " Gundo
 nnoremap <F5> :GundoToggle<CR>
 
+" Tagbar
+nmap <F8> :TagbarToggle<CR>
+
 " See https://joshldavis.com/2014/04/05/vim-tab-madness-buffers-vs-tabs/
 " To open a new empty buffer
 " This replaces :tabnew which I used to bind to this mapping
@@ -149,3 +155,11 @@ nmap <leader>bq :bp <BAR> bd #<CR>
 
 " Show all open buffers and their status
 nmap <leader>bl :ls<CR>
+
+
+" GTAGS and unite-gtags mappings
+nnoremap <leader>gg :execute 'Unite gtags/def:'.expand('<cword>')<CR>
+nnoremap <leader>gc :execute 'Unite gtags/context'<CR>
+nnoremap <leader>gr :execute 'Unite gtags/ref'<CR>
+nnoremap <leader>ge :execute 'Unite gtags/grep'<CR>
+vnoremap <leader>gg <ESC>:execute 'Unite gtags/def:'.GetVisualSelection()<CR>
