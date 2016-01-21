@@ -35,6 +35,11 @@ Plugin 'gmarik/Vundle.vim'
 " Robotframework Highlighting - usage : setf robot
 " Plugin 'git://github.com/mfukar/robotframework-vim.git'
 
+" You CompleteMe plugin
+Plugin 'Valloric/YouCompleteMe'
+
+Plugin 'easymotion/vim-easymotion'
+
 call vundle#end()            " required
 
 autocmd VimEnter * DisableWhitespace
@@ -93,9 +98,9 @@ set list
 " set listchars=eol:⏎,tab:␉·,trail:␠,nbsp:⏟
 set listchars=tab:␉·,trail:␠,nbsp:⏟
 
-set csprg=gtags-cscope
-let gtagsfile = $GTAGSROOT.'GTAGS'
-execute "cscope add ".gtagsfile
+"set csprg=gtags-cscope
+"let gtagsfile = $GTAGSROOT.'GTAGS'
+"execute \"cscope add \".gtagsfile
 
 set tags=./tags,tags;/
 " ***************************************************************************************
@@ -158,8 +163,29 @@ nmap <leader>bl :ls<CR>
 
 
 " GTAGS and unite-gtags mappings
-nnoremap <leader>gg :execute 'Unite gtags/def:'.expand('<cword>')<CR>
-nnoremap <leader>gc :execute 'Unite gtags/context'<CR>
-nnoremap <leader>gr :execute 'Unite gtags/ref'<CR>
-nnoremap <leader>ge :execute 'Unite gtags/grep'<CR>
-vnoremap <leader>gg <ESC>:execute 'Unite gtags/def:'.GetVisualSelection()<CR>
+"nnoremap <leader>gg :execute 'Unite gtags/def:'.expand('<cword>')<CR>
+"nnoremap <leader>gc :execute 'Unite gtags/context'<CR>
+"nnoremap <leader>gr :execute 'Unite gtags/ref'<CR>
+"nnoremap <leader>ge :execute 'Unite gtags/grep'<CR>
+"vnoremap <leader>gg <ESC>:execute 'Unite gtags/def:'.GetVisualSelection()<CR>
+nnoremap <leader>jd :YcmCompleter GoTo<CR>
+nnoremap <leader>jh :YcmCompleter GoToDefinition<CR>
+
+"easymotion remapping
+map <Leader> <Plug>(easymotion-prefix)
+
+let g:EasyMotion_do_mapping = 0 " Disable default mappings
+
+" Jump to anywhere you want with minimal keystrokes, with just one key binding.
+" `s{char}{label}`
+"nmap s <Plug>(easymotion-overwin-f)
+" or
+" `s{char}{char}{label}`
+" Need one more keystroke, but on average, it may be more comfortable.
+nmap s <Plug>(easymotion-overwin-f2)
+" Turn on case insensitive feature
+let g:EasyMotion_smartcase = 1
+" JK motions: Line motions
+map <Leader>jj <Plug>(easymotion-j)
+map <Leader>kk <Plug>(easymotion-k)"
+
