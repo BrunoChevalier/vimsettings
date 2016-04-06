@@ -103,6 +103,10 @@ set listchars=tab:␉·,trail:␠,nbsp:⏟
 "execute \"cscope add \".gtagsfile
 
 set tags=./tags,tags;/
+
+if exists('+colorcolumn')
+    set colorcolumn=80,100,120
+endif
 " ***************************************************************************************
 " ---------------------------------------------------------------------------------------
 " Key bindings
