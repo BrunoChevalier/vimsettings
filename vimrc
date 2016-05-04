@@ -40,6 +40,8 @@ Plugin 'Valloric/YouCompleteMe'
 
 Plugin 'easymotion/vim-easymotion'
 
+Plugin 'ctrlpvim/ctrlp.vim'
+
 call vundle#end()            " required
 
 autocmd VimEnter * DisableWhitespace
@@ -50,6 +52,8 @@ autocmd VimEnter * EnableWhitespace
 " "Normal" Vim settings
 " ---------------------------------------------------------------------------------------
 " ***************************************************************************************
+" Color settings
+set t_Co=256
 
 " Search settings -----------------------------------------------------------------------
 set hlsearch        "Highlight all results that match your search
@@ -68,8 +72,8 @@ set shiftwidth=4   "Test first if we can do without it
 set pastetoggle=<F2>
 
 " Interface settings --------------------------------------------------------------------
-set background=dark
 colorscheme solarized "Set colorscheme - moloki is based on molokai with some minor changes"
+set background=dark
 let g:airline#extensions#bufferline#enabled = 1     "Display buffer in airline bar
 set cursorline      "Highlight the line where the cursor is
 set langmenu=none   "langmenu options sets the language used in menu's - none = English
@@ -191,5 +195,17 @@ nmap s <Plug>(easymotion-overwin-f2)
 let g:EasyMotion_smartcase = 1
 " JK motions: Line motions
 map <Leader>jj <Plug>(easymotion-j)
-map <Leader>kk <Plug>(easymotion-k)"
+map <Leader>kk <Plug>(easymotion-k)
+
+
+" CtrlP settings
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip
+let g:ctrlp_cmd = 'CtrlP'
+let g:ctrlp_working_path_mode = 'a'
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'file': '\v\.(exe|so|dll)$',
+  \ 'link': 'some_bad_symbolic_links',
+  \ }
+nnoremap <leader>p :CtrlPMixed<CR>
 
