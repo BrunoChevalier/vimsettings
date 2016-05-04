@@ -44,6 +44,8 @@ Plugin 'ctrlpvim/ctrlp.vim'
 
 call vundle#end()            " required
 
+set runtimepath^=~/.vim/bundle/ctrlp.vim
+
 autocmd VimEnter * DisableWhitespace
 autocmd VimEnter * EnableWhitespace
 
