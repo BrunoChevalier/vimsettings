@@ -1,11 +1,6 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =9
-let g:netrw_dirhist_1='/repo/brunoch/devtools/ivy/ivysettings'
-let g:netrw_dirhist_2='/ap/local/devtools/buildme/buildme/client'
-let g:netrw_dirhist_3='/repo/brunoch/sw/vobs/dsl/sw/flat/reborn_userspace_hww/export'
-let g:netrw_dirhist_4='/repo/brunoch/sw_spi/vobs/dsl/sw/flat/CommonInclude/export'
-let g:netrw_dirhist_5='/repo/brunoch/devtools/buildme/buildme/client'
-let g:netrw_dirhist_6='/repo/brunoch/devtools/buildme/buildme'
-let g:netrw_dirhist_7='/repo/brunoch/cpan/build/Perl-Metrics-0.09-KtqjZw/lib/Perl/Metrics'
-let g:netrw_dirhist_8='/home/brunoch/localperl/lib/perl5/Padre/Plugin/Autodia'
-let g:netrw_dirhist_9='/repo/brunoch/sw/vobs/esam/build/release_info'
+let g:netrw_dirhist_cnt =4
+let g:netrw_dirhist_1='/repo/brunoch/pkg/local_rant_b/pack_55.799'
+let g:netrw_dirhist_2='/repo/brunoch/sw/vobs/dsl/sw/flat/CLI_Language/IHUB'
+let g:netrw_dirhist_3='/home/brunoch/Documents/c_tests/suffix/suffix.c'
+let g:netrw_dirhist_4='/repo/brunoch/buildroot-s6/package/s6-linux-init-skeleton/files/etc/s6-rc/source/setup-net'
