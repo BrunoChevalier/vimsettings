@@ -4,8 +4,10 @@
 " Info: bmgg.chevalier@gmail.com
 " ---------------------------------------------------------------------------------------
 " ***************************************************************************************
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
 execute pathogen#infect()
-filetype plugin indent on
 
 " ***************************************************************************************
 " ---------------------------------------------------------------------------------------
@@ -41,7 +43,10 @@ Plugin 'easymotion/vim-easymotion'
 
 Plugin 'ctrlpvim/ctrlp.vim'
 
+Plugin 'Yggdroot/indentLine'
+
 call vundle#end()            " required
+filetype plugin indent on
 
 set runtimepath^=~/.vim/bundle/ctrlp.vim
 
@@ -79,9 +84,13 @@ autocmd InsertLeave * :set relativenumber
 set autoindent      "Copy indent from the current line when starting a new line
 set expandtab       "Use spaces to insert a <Tab> - A tab can be inserted by using <C-V><Tab>
 set tabstop=4       "Number of spaces that a <Tab> in the file counts for
-set shiftwidth=4   "Test first if we can do without it
+set shiftwidth=4    "when indenting with '>', use 4 spaces width
 
 set pastetoggle=<F2>
+
+" Don't expand for the following filetypes
+autocmd FileType make setlocal noexpandtab
+autocmd FileType dts setlocal noexpandtab
 
 " Interface settings --------------------------------------------------------------------
 colorscheme solarized "Set colorscheme to solarized"
@@ -108,11 +117,16 @@ set omnifunc=syntaxcomplete#Complete    "Enables smart completion with <C-X> - f
 set scrolloff=0
 set showcmd         "Show the current command-key-combination at the rights side in the status bar
 set wildmenu        "Better command-line completion
+set wildignore=*.o,*~,*.pyc " Ignore compiled files
 set hidden          "Be able to switch between buffer without having to save every time
 
 set list
 " set listchars=eol:⏎,tab:␉·,trail:␠,nbsp:⏟
 set listchars=tab:␉·,trail:␠,nbsp:⏟
+
+
+" Show matching brackets when text inidicator is over them
+set showmatch
 
 "set csprg=gtags-cscope
 "let gtagsfile = $GTAGSROOT.'GTAGS'
