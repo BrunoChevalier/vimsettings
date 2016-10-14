@@ -64,6 +64,17 @@ set incsearch       "Highlight all results that match your search while you're t
 set number          "Display line numbers on the left side
 set relativenumber  "Enable relative number counting - absolute line numbers still work
 
+" automatically switch to absolute line numbers whenever Vim loses focus,
+" since we don't really care about the relative line numbers unless
+" we're moving around
+:au FocusLost * :set norelativenumber
+:au FocusGained * :set relativenumber
+
+" We don't move around in insert mode, so we don't need relative line numbers
+autocmd InsertEnter * :set norelativenumber
+autocmd InsertLeave * :set relativenumber
+
+
 " Tab settings --------------------------------------------------------------------------
 set autoindent      "Copy indent from the current line when starting a new line
 set expandtab       "Use spaces to insert a <Tab> - A tab can be inserted by using <C-V><Tab>
@@ -73,7 +84,7 @@ set shiftwidth=4   "Test first if we can do without it
 set pastetoggle=<F2>
 
 " Interface settings --------------------------------------------------------------------
-colorscheme solarized "Set colorscheme - moloki is based on molokai with some minor changes"
+colorscheme solarized "Set colorscheme to solarized"
 set background=dark
 let g:airline#extensions#bufferline#enabled = 1     "Display buffer in airline bar
 set cursorline      "Highlight the line where the cursor is
