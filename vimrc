@@ -4,9 +4,10 @@
 " Info: bmgg.chevalier@gmail.com
 " ---------------------------------------------------------------------------------------
 " ***************************************************************************************
-execute pathogen#infect()
-filetype plugin indent on
+set nocompatible              " be iMproved, required
+filetype off                  " required
 
+execute pathogen#infect()
 
 " ***************************************************************************************
 " ---------------------------------------------------------------------------------------
@@ -42,7 +43,12 @@ Plugin 'easymotion/vim-easymotion'
 
 Plugin 'ctrlpvim/ctrlp.vim'
 
+Plugin 'Yggdroot/indentLine'
+
 call vundle#end()            " required
+filetype plugin indent on
+
+set runtimepath^=~/.vim/bundle/ctrlp.vim
 
 autocmd VimEnter * DisableWhitespace
 autocmd VimEnter * EnableWhitespace
@@ -63,16 +69,31 @@ set incsearch       "Highlight all results that match your search while you're t
 set number          "Display line numbers on the left side
 set relativenumber  "Enable relative number counting - absolute line numbers still work
 
+" automatically switch to absolute line numbers whenever Vim loses focus,
+" since we don't really care about the relative line numbers unless
+" we're moving around
+:au FocusLost * :set norelativenumber
+:au FocusGained * :set relativenumber
+
+" We don't move around in insert mode, so we don't need relative line numbers
+autocmd InsertEnter * :set norelativenumber
+autocmd InsertLeave * :set relativenumber
+
+
 " Tab settings --------------------------------------------------------------------------
 set autoindent      "Copy indent from the current line when starting a new line
 set expandtab       "Use spaces to insert a <Tab> - A tab can be inserted by using <C-V><Tab>
 set tabstop=4       "Number of spaces that a <Tab> in the file counts for
-set shiftwidth=4   "Test first if we can do without it
+set shiftwidth=4    "when indenting with '>', use 4 spaces width
 
 set pastetoggle=<F2>
 
+" Don't expand for the following filetypes
+autocmd FileType make setlocal noexpandtab
+autocmd FileType dts setlocal noexpandtab
+
 " Interface settings --------------------------------------------------------------------
-colorscheme solarized "Set colorscheme - moloki is based on molokai with some minor changes"
+colorscheme solarized "Set colorscheme to solarized"
 set background=dark
 let g:airline#extensions#bufferline#enabled = 1     "Display buffer in airline bar
 set cursorline      "Highlight the line where the cursor is
@@ -96,11 +117,16 @@ set omnifunc=syntaxcomplete#Complete    "Enables smart completion with <C-X> - f
 set scrolloff=0
 set showcmd         "Show the current command-key-combination at the rights side in the status bar
 set wildmenu        "Better command-line completion
+set wildignore=*.o,*~,*.pyc " Ignore compiled files
 set hidden          "Be able to switch between buffer without having to save every time
 
 set list
 " set listchars=eol:⏎,tab:␉·,trail:␠,nbsp:⏟
 set listchars=tab:␉·,trail:␠,nbsp:⏟
+
+
+" Show matching brackets when text inidicator is over them
+set showmatch
 
 "set csprg=gtags-cscope
 "let gtagsfile = $GTAGSROOT.'GTAGS'
