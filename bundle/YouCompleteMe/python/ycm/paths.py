@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-#
-# Copyright (C) 2015 YouCompleteMe contributors.
+# Copyright (C) 2015-2017 YouCompleteMe contributors.
 #
 # This file is part of YouCompleteMe.
 #
@@ -17,61 +15,88 @@
 # You should have received a copy of the GNU General Public License
 # along with YouCompleteMe.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+# Not installing aliases from python-future; it's unreliable and slow.
+from builtins import *  # noqa
+
 import os
+import sys
 import vim
-import functools
-from ycmd import utils
+import re
 
+# Can't import these from setup.py because it makes nosetests go crazy.
 DIR_OF_CURRENT_SCRIPT = os.path.dirname( os.path.abspath( __file__ ) )
-
-WIN_PYTHON27_PATH = 'C:\python27\python.exe'
-WIN_PYTHON26_PATH = 'C:\python26\python.exe'
-
-
-def Memoize( obj ):
-  cache = obj.cache = {}
-
-  @functools.wraps( obj )
-  def memoizer( *args, **kwargs ):
-    key = str( args ) + str( kwargs )
-    if key not in cache:
-      cache[ key ] = obj( *args, **kwargs )
-    return cache[ key ]
-  return memoizer
+DIR_OF_YCMD = os.path.join( DIR_OF_CURRENT_SCRIPT, '..', '..', 'third_party',
+                            'ycmd' )
+WIN_PYTHON_PATH = os.path.join( sys.exec_prefix, 'python.exe' )
+PYTHON_BINARY_REGEX = re.compile(
+  r'python((2(\.7)?)|(3(\.[5-9])?))?(.exe)?$', re.IGNORECASE )
 
 
-@Memoize
+# Not caching the result of this function; users shouldn't have to restart Vim
+# after running the install script or setting the
+# `g:ycm_server_python_interpreter` option.
 def PathToPythonInterpreter():
-  user_path_to_python = vim.eval( 'g:ycm_path_to_python_interpreter' )
+  # Not calling the Python interpreter to check its version as it significantly
+  # impacts startup time.
+  from ycmd import utils
 
-  if user_path_to_python:
-    return user_path_to_python
+  python_interpreter = vim.eval( 'g:ycm_server_python_interpreter' )
+  if python_interpreter:
+    python_interpreter = utils.FindExecutable( python_interpreter )
+    if python_interpreter:
+      return python_interpreter
 
-  # We check for 'python2' before 'python' because some OS's (I'm looking at
-  # you Arch Linux) have made the... interesting decision to point
-  # /usr/bin/python to python3.
-  python_names = [ 'python2', 'python' ]
+    raise RuntimeError( "Path in 'g:ycm_server_python_interpreter' option "
+                        "does not point to a valid Python 2.7 or 3.5+." )
 
-  path_to_python = utils.PathToFirstExistingExecutable( python_names )
-  if path_to_python:
-    return path_to_python
+  python_interpreter = _PathToPythonUsedDuringBuild()
+  if python_interpreter and utils.GetExecutable( python_interpreter ):
+    return python_interpreter
 
-  # On Windows, Python may not be on the PATH at all, so we check some common
-  # install locations.
-  if utils.OnWindows():
-    if os.path.exists( WIN_PYTHON27_PATH ):
-      return WIN_PYTHON27_PATH
-    elif os.path.exists( WIN_PYTHON26_PATH ):
-      return WIN_PYTHON26_PATH
+  # On UNIX platforms, we use sys.executable as the Python interpreter path.
+  # We cannot use sys.executable on Windows because for unknown reasons, it
+  # returns the Vim executable. Instead, we use sys.exec_prefix to deduce the
+  # interpreter path.
+  python_interpreter = ( WIN_PYTHON_PATH if utils.OnWindows() else
+                         sys.executable )
+  if _EndsWithPython( python_interpreter ):
+    return python_interpreter
 
-  raise RuntimeError( 'Python 2.7/2.6 not installed!' )
+  # As a last resort, we search python in the PATH. We prefer Python 2 over 3
+  # for the sake of backwards compatibility with ycm_extra_conf.py files out
+  # there; few people wrote theirs to work on py3.
+  # So we check 'python2' before 'python' because on some distributions (Arch
+  # Linux for example), python refers to python3.
+  python_interpreter = utils.PathToFirstExistingExecutable( [ 'python2',
+                                                              'python',
+                                                              'python3' ] )
+  if python_interpreter:
+    return python_interpreter
+
+  raise RuntimeError( "Cannot find Python 2.7 or 3.5+. "
+                      "Set the 'g:ycm_server_python_interpreter' option "
+                      "to a Python interpreter path." )
+
+
+def _PathToPythonUsedDuringBuild():
+  from ycmd import utils
+
+  try:
+    filepath = os.path.join( DIR_OF_YCMD, 'PYTHON_USED_DURING_BUILDING' )
+    return utils.ReadFile( filepath ).strip()
+  # We need to check for IOError for Python2 and OSError for Python3
+  except ( IOError, OSError ):
+    return None
+
+
+def _EndsWithPython( path ):
+  """Check if given path ends with a python 2.7 or 3.5+ name."""
+  return path and PYTHON_BINARY_REGEX.search( path ) is not None
 
 
 def PathToServerScript():
-  return os.path.join( DIR_OF_CURRENT_SCRIPT, '..', '..', 'third_party',
-                       'ycmd', 'ycmd' )
-
-
-def PathToCheckCoreVersion():
-  return os.path.join( DIR_OF_CURRENT_SCRIPT, '..', '..', 'third_party',
-                       'ycmd', 'check_core_version.py' )
+  return os.path.join( DIR_OF_YCMD, 'ycmd' )

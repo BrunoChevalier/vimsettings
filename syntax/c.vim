@@ -1,5 +1,5 @@
 syn match    cCustomParen    "?=(" contains=cParen contains=cCppParen
-syn match    cCustomFunc     "\w\+\z\s*(" contains=cCustomParen
+syn match    cCustomFunc     "\w\+\ze\s*(" contains=cCustomParen
 syn match    cCustomScope    "::"
 syn match    cCustomClass    "\w\+\s*::" contains=cCustomScope
 

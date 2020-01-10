@@ -1,8 +1,8 @@
 let g:netrw_dirhistmax  =10
 let g:netrw_dirhist_cnt =6
-let g:netrw_dirhist_1='/repo/brunoch/pkg/local_rant_b/pack_55.799'
-let g:netrw_dirhist_2='/repo/brunoch/sw/vobs/dsl/sw/flat/CLI_Language/IHUB'
-let g:netrw_dirhist_3='/home/brunoch/Documents/c_tests/suffix/suffix.c'
-let g:netrw_dirhist_4='/repo/brunoch/buildroot-s6/package/s6-linux-init-skeleton/files/etc/s6-rc/source/setup-net'
-let g:netrw_dirhist_5='/repo/brunoch/buildroot/board/Nokia/isam-reborn/common/target_skeleton_extras'
-let g:netrw_dirhist_6='/repo/brunoch/buildroot-s6-rc/board/Nokia/isam-reborn/board/srnt-d'
+let g:netrw_dirhist_1='/home/brunoch/.docker'
+let g:netrw_dirhist_2='/repo/brunoch/sw-team-bazel/vobs/dsl/sw/flat/BLDCOMMON'
+let g:netrw_dirhist_3='/repo/brunoch/buildroot_default/package/Broadcom/bcm963xx_bcmdrivers'
+let g:netrw_dirhist_4='/repo/brunoch/sw_default/vobs/esam/build/nvlt-g/OS'
+let g:netrw_dirhist_5='/repo/brunoch/mercurial-scripts/delivery/devwrapper'
+let g:netrw_dirhist_6='/net/bldsrv228/volume7/baseline_packages/6202.395p08'

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-#
 # Copyright (C) 2013  Google Inc.
 #
 # This file is part of YouCompleteMe.
@@ -17,8 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with YouCompleteMe.  If not, see <http://www.gnu.org/licenses/>.
 
-from ycm.client.base_request import ( BaseRequest, BuildRequestData,
-                                      HandleServerException )
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+# Not installing aliases from python-future; it's unreliable and slow.
+from builtins import *  # noqa
+
+from ycm.client.base_request import BaseRequest, BuildRequestData
+
 
 class CompleterAvailableRequest( BaseRequest ):
   def __init__( self, filetypes ):
@@ -30,11 +35,8 @@ class CompleterAvailableRequest( BaseRequest ):
   def Start( self ):
     request_data = BuildRequestData()
     request_data.update( { 'filetypes': self.filetypes } )
-    try:
-      self._response = self.PostDataToHandler( request_data,
-                                               'semantic_completion_available' )
-    except Exception as e:
-      HandleServerException( e )
+    self._response = self.PostDataToHandler( request_data,
+                                             'semantic_completion_available' )
 
 
   def Response( self ):

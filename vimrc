@@ -45,6 +45,9 @@ Plugin 'ctrlpvim/ctrlp.vim'
 
 Plugin 'Yggdroot/indentLine'
 
+"minimap requires drawille
+"Plugin 'severin-lemaignan/vim-minimap'
+
 call vundle#end()            " required
 filetype plugin indent on
 
@@ -58,6 +61,9 @@ autocmd VimEnter * EnableWhitespace
 " "Normal" Vim settings
 " ---------------------------------------------------------------------------------------
 " ***************************************************************************************
+" FileType settings
+au BufRead,BufNewFile *.do set filetype=tcl
+
 " Color settings
 set t_Co=256
 
@@ -68,6 +74,8 @@ set incsearch       "Highlight all results that match your search while you're t
 " Number settings -----------------------------------------------------------------------
 set number          "Display line numbers on the left side
 set relativenumber  "Enable relative number counting - absolute line numbers still work
+"Toggle linenumbers on and off
+nnoremap <silent> <F12> :set invnumber invrelativenumber<CR>
 
 " automatically switch to absolute line numbers whenever Vim loses focus,
 " since we don't really care about the relative line numbers unless
@@ -82,15 +90,35 @@ autocmd InsertLeave * :set relativenumber
 
 " Tab settings --------------------------------------------------------------------------
 set autoindent      "Copy indent from the current line when starting a new line
-set expandtab       "Use spaces to insert a <Tab> - A tab can be inserted by using <C-V><Tab>
-set tabstop=4       "Number of spaces that a <Tab> in the file counts for
-set shiftwidth=4    "when indenting with '>', use 4 spaces width
-
 set pastetoggle=<F2>
 
-" Don't expand for the following filetypes
+" Special indentation for yaml files
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
+autocmd FileType yml setlocal ts=2 sts=2 sw=2 expandtab
+
+" Don't expand TAB for the following filetypes
 autocmd FileType make setlocal noexpandtab
 autocmd FileType dts setlocal noexpandtab
+
+" virtual tabstops using spaces
+let my_tab=4
+execute "set shiftwidth=".my_tab
+execute "set softtabstop=".my_tab
+execute "set tabstop=".my_tab
+set expandtab
+" allow toggling between local and default mode
+function! TabToggle()
+  if &expandtab
+    set shiftwidth=8
+    set softtabstop=0
+    set noexpandtab
+  else
+    execute "set shiftwidth=".g:my_tab
+    execute "set softtabstop=".g:my_tab
+    set expandtab
+  endif
+endfunction
+nmap <F9> mz:execute TabToggle()<CR>'z
 
 " Interface settings --------------------------------------------------------------------
 colorscheme solarized "Set colorscheme to solarized"
@@ -105,7 +133,9 @@ syntax enable           "Set syntaxhighlighting on
 let g:airline#extensions#tabline#enabled = 1
 
 " Show just the filename
-let g:airline#extensions#tabline#fnamemod = ':t'
+" let g:airline#extensions#tabline#fnamemod = ':t'
+" Use different formatter
+let g:airline#extensions#tabline#formatter = 'short_path'
 
 " Misc settings -------------------------------------------------------------------------
 set backspace=indent,eol,start  "Allow backspace in insert mode
@@ -113,8 +143,11 @@ set complete+=i     "Also search in included files for completion
 set nocompatible    " Make Vim not Vi-compatible (behave more useful)
 set omnifunc=syntaxcomplete#Complete    "Enables smart completion with <C-X> - filetype plugin on is needed for this
 "When putting the line on your cursor to the end(zb)/middle(zz)/top(zt) of the
-"screen, scroloff determinates the lines between the end and the selected line
-set scrolloff=0
+"screen, scroloff determines the lines between the end and the selected line
+set scrolloff=0 "Start scrollling 10 lines before the top or bottom
+set shortmess=a "avoid typing ENTER to continue
+set cmdheight=2 "More room for messages
+
 set showcmd         "Show the current command-key-combination at the rights side in the status bar
 set wildmenu        "Better command-line completion
 set wildignore=*.o,*~,*.pyc " Ignore compiled files
@@ -151,6 +184,12 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
+" Append at end of word (even when on last character of the word)
+nnoremap ea hea
+nnoremap Ea hEa
+
+nnoremap <silent> - :Explore<CR>
+
 " To complete a whole line --------------------------------------------------------------
 inoremap <C-l> <C-X><C-l>
 
@@ -171,12 +210,6 @@ imap <Right> <Nop>
 " Remap goto end of line (easier to reach) ----------------------------------------------
 noremap ; $
 
-" Gundo
-nnoremap <F5> :GundoToggle<CR>
-
-" Tagbar
-nmap <F8> :TagbarToggle<CR>
-
 " See https://joshldavis.com/2014/04/05/vim-tab-madness-buffers-vs-tabs/
 " To open a new empty buffer
 " This replaces :tabnew which I used to bind to this mapping
@@ -195,6 +228,7 @@ nmap <leader>bq :bp <BAR> bd #<CR>
 " Show all open buffers and their status
 nmap <leader>bl :ls<CR>
 
+" Plugins config --------------------------------------------------------------
 
 " GTAGS and unite-gtags mappings
 "nnoremap <leader>gg :execute 'Unite gtags/def:'.expand('<cword>')<CR>
@@ -234,4 +268,28 @@ let g:ctrlp_custom_ignore = {
   \ 'link': 'some_bad_symbolic_links',
   \ }
 nnoremap <leader>p :CtrlPMixed<CR>
+nnoremap <leader>. :CtrlPTag<CR>
 
+" Syntastic settings
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_sh_shellcheck_args = "-s bash"
+let g:syntastic_yaml_checkers = ['yamllint']
+let g:syntastic_python_checkers = ['mypy', 'flake8']
+nnoremap <leader>[ :lprevious<CR>
+nnoremap <leader>] :lnext<CR>
+
+" Fastfold settings
+nmap zuz <Plug>(FastFoldUpdate)
+let g:fastfold_savehook = 1
+let g:fastfold_fold_command_suffixes =  ['x','X','a','A','o','O','c','C']
+let g:fastfold_fold_movement_commands = [']z', '[z', 'zj', 'zk']
+
+" indentLine settings
+let g:indentLine_setConceal = 0

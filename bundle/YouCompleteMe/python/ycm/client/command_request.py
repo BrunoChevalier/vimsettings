@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-#
 # Copyright (C) 2013  Google Inc.
 #
 # This file is part of YouCompleteMe.
@@ -17,10 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with YouCompleteMe.  If not, see <http://www.gnu.org/licenses/>.
 
-import vim
-from ycm.client.base_request import BaseRequest, BuildRequestData, ServerError
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+# Not installing aliases from python-future; it's unreliable and slow.
+from builtins import *  # noqa
+
+from ycm.client.base_request import BaseRequest, BuildRequestData
 from ycm import vimsupport
-from ycmd.utils import ToUtf8IfNeeded
+from ycmd.utils import ToUnicode
 
 
 def _EnsureBackwardsCompatibility( arguments ):
@@ -30,44 +34,36 @@ def _EnsureBackwardsCompatibility( arguments ):
 
 
 class CommandRequest( BaseRequest ):
-  def __init__( self, arguments, completer_target = None ):
+  def __init__( self,
+                arguments,
+                buffer_command = 'same-buffer',
+                extra_data = None ):
     super( CommandRequest, self ).__init__()
     self._arguments = _EnsureBackwardsCompatibility( arguments )
-    self._completer_target = ( completer_target if completer_target
-                               else 'filetype_default' )
-    self._is_goto_command = (
-        self._arguments and self._arguments[ 0 ].startswith( 'GoTo' ) )
-    self._is_fixit_command = (
-        self._arguments and self._arguments[ 0 ].startswith( 'FixIt' ) )
+    self._command = arguments and arguments[ 0 ]
+    self._buffer_command = buffer_command
+    self._extra_data = extra_data
     self._response = None
 
 
   def Start( self ):
     request_data = BuildRequestData()
+    if self._extra_data:
+      request_data.update( self._extra_data )
     request_data.update( {
-      'completer_target': self._completer_target,
       'command_arguments': self._arguments
     } )
-    try:
-      self._response = self.PostDataToHandler( request_data,
-                                               'run_completer_command' )
-    except ServerError as e:
-      vimsupport.PostMultiLineNotice( e )
+    self._response = self.PostDataToHandler( request_data,
+                                             'run_completer_command' )
 
 
   def Response( self ):
     return self._response
 
 
-  def RunPostCommandActionsIfNeeded( self ):
+  def RunPostCommandActionsIfNeeded( self, modifiers ):
     if not self.Done() or self._response is None:
       return
-
-    if self._is_goto_command:
-      return self._HandleGotoResponse()
-
-    if self._is_fixit_command:
-      return self._HandleFixitResponse()
 
     # If not a dictionary or a list, the response is necessarily a
     # scalar: boolean, number, string, etc. In this case, we print
@@ -75,63 +71,86 @@ class CommandRequest( BaseRequest ):
     if not isinstance( self._response, ( dict, list ) ):
       return self._HandleBasicResponse()
 
+    if 'fixits' in self._response:
+      return self._HandleFixitResponse()
+
     if 'message' in self._response:
       return self._HandleMessageResponse()
 
     if 'detailed_info' in self._response:
       return self._HandleDetailedInfoResponse()
 
+    # The only other type of response we understand is GoTo, and that is the
+    # only one that we can't detect just by inspecting the response (it should
+    # either be a single location or a list)
+    return self._HandleGotoResponse( modifiers )
 
-  def _HandleGotoResponse( self ):
+
+  def _HandleGotoResponse( self, modifiers ):
     if isinstance( self._response, list ):
-      defs = [ _BuildQfListItem( x ) for x in self._response ]
-      vim.eval( 'setqflist( %s )' % repr( defs ) )
-      vim.eval( 'youcompleteme#OpenGoToList()' )
+      vimsupport.SetQuickFixList(
+        [ _BuildQfListItem( x ) for x in self._response ] )
+      vimsupport.OpenQuickFixList( focus = True, autoclose = True )
     else:
       vimsupport.JumpToLocation( self._response[ 'filepath' ],
                                  self._response[ 'line_num' ],
-                                 self._response[ 'column_num' ] )
+                                 self._response[ 'column_num' ],
+                                 modifiers,
+                                 self._buffer_command )
 
 
   def _HandleFixitResponse( self ):
     if not len( self._response[ 'fixits' ] ):
-      vimsupport.EchoText( "No fixits found for current line" )
+      vimsupport.PostVimMessage( 'No fixits found for current line',
+                                 warning = False )
     else:
-      chunks = self._response[ 'fixits' ][ 0 ][ 'chunks' ]
+      try:
+        fixit_index = 0
 
-      vimsupport.ReplaceChunksList( chunks )
+        # When there are multiple fixit suggestions, present them as a list to
+        # the user hand have her choose which one to apply.
+        if len( self._response[ 'fixits' ] ) > 1:
+          fixit_index = vimsupport.SelectFromList(
+            "Multiple FixIt suggestions are available at this location. "
+            "Which one would you like to apply?",
+            [ fixit[ 'text' ] for fixit in self._response[ 'fixits' ] ] )
 
-      vimsupport.EchoTextVimWidth( "FixIt applied "
-                                   + str( len( chunks ) )
-                                   + " changes" )
+        vimsupport.ReplaceChunks(
+          self._response[ 'fixits' ][ fixit_index ][ 'chunks' ],
+          silent = self._command == 'Format' )
+      except RuntimeError as e:
+        vimsupport.PostVimMessage( str( e ) )
 
 
   def _HandleBasicResponse( self ):
-    vimsupport.EchoText( self._response )
+    vimsupport.PostVimMessage( self._response, warning = False )
 
 
   def _HandleMessageResponse( self ):
-    vimsupport.EchoText( self._response[ 'message' ] )
+    vimsupport.PostVimMessage( self._response[ 'message' ], warning = False )
 
 
   def _HandleDetailedInfoResponse( self ):
     vimsupport.WriteToPreviewWindow( self._response[ 'detailed_info' ] )
 
 
-def SendCommandRequest( arguments, completer ):
-  request = CommandRequest( arguments, completer )
+def SendCommandRequest( arguments,
+                        modifiers,
+                        buffer_command,
+                        extra_data = None ):
+  request = CommandRequest( arguments, buffer_command, extra_data )
   # This is a blocking call.
   request.Start()
-  request.RunPostCommandActionsIfNeeded()
+  request.RunPostCommandActionsIfNeeded( modifiers )
   return request.Response()
 
 
 def _BuildQfListItem( goto_data_item ):
   qf_item = {}
   if 'filepath' in goto_data_item:
-    qf_item[ 'filename' ] = ToUtf8IfNeeded( goto_data_item[ 'filepath' ] )
+    qf_item[ 'filename' ] = ToUnicode( goto_data_item[ 'filepath' ] )
   if 'description' in goto_data_item:
-    qf_item[ 'text' ] = ToUtf8IfNeeded( goto_data_item[ 'description' ] )
+    qf_item[ 'text' ] = ToUnicode( goto_data_item[ 'description' ] )
   if 'line_num' in goto_data_item:
     qf_item[ 'lnum' ] = goto_data_item[ 'line_num' ]
   if 'column_num' in goto_data_item:
