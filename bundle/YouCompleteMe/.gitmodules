@@ -3,7 +3,7 @@
 	url = https://github.com/ross/requests-futures
 [submodule "third_party/ycmd"]
 	path = third_party/ycmd
-	url = https://github.com/Valloric/ycmd
+	url = https://github.com/ycm-core/ycmd
 [submodule "third_party/requests_deps/idna"]
 	path = third_party/requests_deps/idna
 	url = https://github.com/kjd/idna
@@ -19,6 +19,3 @@
 [submodule "third_party/requests_deps/requests"]
 	path = third_party/requests_deps/requests
 	url = https://github.com/requests/requests
-[submodule "third_party/python-future"]
-	path = third_party/python-future
-	url = https://github.com/PythonCharmers/python-future

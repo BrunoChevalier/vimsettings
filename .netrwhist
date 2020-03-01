@@ -1,8 +1,4 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =6
-let g:netrw_dirhist_1='/home/brunoch/.docker'
-let g:netrw_dirhist_2='/repo/brunoch/sw-team-bazel/vobs/dsl/sw/flat/BLDCOMMON'
-let g:netrw_dirhist_3='/repo/brunoch/buildroot_default/package/Broadcom/bcm963xx_bcmdrivers'
-let g:netrw_dirhist_4='/repo/brunoch/sw_default/vobs/esam/build/nvlt-g/OS'
-let g:netrw_dirhist_5='/repo/brunoch/mercurial-scripts/delivery/devwrapper'
-let g:netrw_dirhist_6='/net/bldsrv228/volume7/baseline_packages/6202.395p08'
+let g:netrw_dirhistcnt =2
+let g:netrw_dirhist_2='/home/bchevalier/Documents/udemy/modern_react/jsx/node_modules'
+let g:netrw_dirhist_1='/home/bchevalier'

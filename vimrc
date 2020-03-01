@@ -5,53 +5,76 @@
 " ---------------------------------------------------------------------------------------
 " ***************************************************************************************
 set nocompatible              " be iMproved, required
-filetype off                  " required
-
-execute pathogen#infect()
-
-" ***************************************************************************************
-" ---------------------------------------------------------------------------------------
-" Vundle package manager
-" ---------------------------------------------------------------------------------------
-" ***************************************************************************************
-
+set encoding=utf-8
+filetype off
 " set the runtime path to include Vundle and initialize
-call vundle#begin()
+set rtp+=~/.vim/bundle/Vundle.vim
+
+" Install vim-plug if it's not present
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+" :PlugInstall to install
+" :PlugUpdate to install or update plugins
+" :PlugClean[!] Remove unlisted plugins (bang version will clean without prompt)
+" :PlugUpgrade upgrade vim-plug itself
+call plug#begin('~/.vim/plugged')
 
 " Fancy statusbar
-Plugin 'bling/vim-airline'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'enricobacis/vim-airline-clock'
 
-" Angry plugin - to use 'a' for argument (change in argument, delete all arguments)
-Plugin 'b4winckler/vim-angry'
+"" Angry plugin - to use 'a' for argument (change in argument, delete all arguments)
+Plug 'b4winckler/vim-angry'
 
 " Plugin to display buffer in airline bar
-Plugin 'bling/vim-bufferline'
+Plug 'bling/vim-bufferline'
 
 " delimitMate
-Plugin 'raimondi/delimitMate'
-
-" let Vundle manage Vundle, required
-Plugin 'gmarik/Vundle.vim'
+Plug 'raimondi/delimitMate'
 
 " Robotframework Highlighting - usage : setf robot
-" Plugin 'git://github.com/mfukar/robotframework-vim.git'
+Plug 'git://github.com/mfukar/robotframework-vim.git'
 
-" You CompleteMe plugin
-Plugin 'Valloric/YouCompleteMe'
+Plug 'easymotion/vim-easymotion'
+Plug 'Yggdroot/indentLine'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'ntpeters/vim-better-whitespace'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-repeat'
 
-Plugin 'easymotion/vim-easymotion'
+" Deus color scheme
+Plug 'ajmwagar/vim-deus'
 
-Plugin 'ctrlpvim/ctrlp.vim'
+" javascript highlighting support
+Plug 'yuezk/vim-js'
 
-Plugin 'Yggdroot/indentLine'
+" Typescript/tsx highlighting support
+Plug 'HerringtonDarkholme/yats.vim'
+
+" jsx highlighting support
+Plug 'maxmellon/vim-jsx-pretty'
 
 "minimap requires drawille
 "Plugin 'severin-lemaignan/vim-minimap'
+call plug#end()
 
-call vundle#end()            " required
-filetype plugin indent on
 
-set runtimepath^=~/.vim/bundle/ctrlp.vim
+" Use vundle for YouCompleteMe
+" :PluginList       - lists configured plugins
+" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
+" :PluginSearch foo - searches for foo; append `!` to refresh local cache
+" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+call vundle#begin()
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'ycm-core/YouCompleteMe'
+call vundle#end()
+filetype plugin indent on    " required
 
 autocmd VimEnter * DisableWhitespace
 autocmd VimEnter * EnableWhitespace
@@ -63,9 +86,6 @@ autocmd VimEnter * EnableWhitespace
 " ***************************************************************************************
 " FileType settings
 au BufRead,BufNewFile *.do set filetype=tcl
-
-" Color settings
-set t_Co=256
 
 " Search settings -----------------------------------------------------------------------
 set hlsearch        "Highlight all results that match your search
@@ -121,21 +141,68 @@ endfunction
 nmap <F9> mz:execute TabToggle()<CR>'z
 
 " Interface settings --------------------------------------------------------------------
-colorscheme solarized "Set colorscheme to solarized"
-set background=dark
 let g:airline#extensions#bufferline#enabled = 1     "Display buffer in airline bar
+let g:airline_powerline_fonts = 1
 set cursorline      "Highlight the line where the cursor is
 set langmenu=none   "langmenu options sets the language used in menu's - none = English
 set laststatus=2    "Show airline statusbar all the time
 syntax enable           "Set syntaxhighlighting on
 
+" Colors
+set t_Co=256
+set termguicolors
+let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+set background=dark    " Setting dark mode
+colorscheme deus
+let g:deus_termcolors=256
+
+" Set the airline symbols
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+
+" powerline symbols
+" Enter in vim with:
+" In insert mode, type Ctrl+V followed by
+" a decimal number (0-255)
+" o then an octal number (o0-o377, i.e., 255 is the maximum value)
+" x then a hex number (x00-xFF, i.e., 255 is the maximum value)
+" u then a 4-hexchar Unicode sequence
+" U then an 8-hexchar Unicode sequence
+"let g:airline_left_sep = ''
+"let g:airline_left_alt_sep = ''
+"let g:airline_right_sep = ''
+"let g:airline_right_alt_sep = ''
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+let g:airline_symbols.branch = ''
+let g:airline_symbols.crypt = '🔒'
+let g:airline_symbols.dirty='⚡'
+"let g:airline_symbols.linenr = ''
+let g:airline_symbols.linenr = ''
+let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.notexists = 'Ɇ'
+let g:airline_symbols.paste = '∥'
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.spell = 'Ꞩ'
+let g:airline_symbols.whitespace = 'Ξ'
+
+
 " Enable the list of buffers
 let g:airline#extensions#tabline#enabled = 1
+" Straight tabs
+"let g:airline#extensions#tabline#left_sep = ' '
+"let g:airline#extensions#tabline#left_alt_sep = '|'
 
 " Show just the filename
 " let g:airline#extensions#tabline#fnamemod = ':t'
 " Use different formatter
-let g:airline#extensions#tabline#formatter = 'short_path'
+"let g:airline#extensions#tabline#formatter = 'short_path'
+let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
+let g:airline#extensions#clock#format = '%H:%M'
 
 " Misc settings -------------------------------------------------------------------------
 set backspace=indent,eol,start  "Allow backspace in insert mode
@@ -155,7 +222,7 @@ set hidden          "Be able to switch between buffer without having to save eve
 
 set list
 " set listchars=eol:⏎,tab:␉·,trail:␠,nbsp:⏟
-set listchars=tab:␉·,trail:␠,nbsp:⏟
+set listchars=tab:»·,trail:·
 
 
 " Show matching brackets when text inidicator is over them
@@ -293,3 +360,46 @@ let g:fastfold_fold_movement_commands = [']z', '[z', 'zj', 'zk']
 
 " indentLine settings
 let g:indentLine_setConceal = 0
+
+" Completor settings
+"let g:completor_python_binary = '/usr/bin/python'
+"let g:completor_racer_binary = '/usr/bin/racer'
+"let g:completor_node_binary = '/usr/bin/node'
+"let g:completor_clang_binary = '/usr/bin/clang'
+"let g:completor_tsserver_binary = '/usr/bin/tsserver'
+"
+"" Use TAB to complete when typing words, else inserts TABs as usual.  Uses
+"" dictionary, source files, and completor to find matching words to complete.
+"
+"" Note: usual completion is on <C-n> but more trouble to press all the time.
+"" Never type the same word twice and maybe learn a new spellings!
+"" Use the Linux dictionary when spelling is in doubt.
+"function! Tab_Or_Complete() abort
+"  " If completor is already open the `tab` cycles through suggested completions.
+"  if pumvisible()
+"    return "\<C-N>"
+"  " If completor is not open and we are in the middle of typing a word then
+"  " `tab` opens completor menu.
+"  elseif col('.')>1 && strpart( getline('.'), col('.')-2, 3 ) =~ '^[[:keyword:][:ident:]]'
+"    return "\<C-R>=completor#do('complete')\<CR>"
+"  else
+"    " If we aren't typing a word and we press `tab` simply do the normal `tab`
+"    " action.
+"    return "\<Tab>"
+"  endif
+"endfunction
+"
+"" Use `tab` key to select completions.  Default is arrow keys.
+"inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+"inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+"
+"" Use tab to trigger auto completion.  Default suggests completions as you type.
+"let g:completor_auto_trigger = 0
+"inoremap <expr> <Tab> Tab_Or_Complete()
+"
+"noremap <silent> <leader>d :call completor#do('definition')<CR>
+"noremap <silent> <leader>c :call completor#do('doc')<CR>
+"noremap <silent> <leader>f :call completor#do('format')<CR>
+"noremap <silent> <leader>s :call completor#do('hover')<CR>
+
+let g:completor_complete_options = 'menuone,noselect,preview'
