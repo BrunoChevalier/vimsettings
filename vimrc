@@ -48,6 +48,7 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 
 " Deus color scheme
+" To display all highlight cmd = :so $VIMRUNTIME/syntax/hitest.vim
 Plug 'ajmwagar/vim-deus'
 
 " javascript highlighting support
@@ -154,8 +155,8 @@ set termguicolors
 let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 set background=dark    " Setting dark mode
-colorscheme deus
 let g:deus_termcolors=256
+colorscheme deus
 
 " Set the airline symbols
 if !exists('g:airline_symbols')
